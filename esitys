@@ -1,0 +1,75 @@
+Pentti Korpela
+
+Master digital oceanissa, slave nyt labrakone.
+
+Idea:
+Pyydä kaksi numeroa
+Lähetä numerot slavelle
+Slave reagoi ja laskee numerot
+Slave lähettää tulokset takaisin kun valmis
+
+
+Toteuma
+Pyydä kaksi numeroa
+Tee niistä scripti jolla ne lasketaan (helpompi näin vs lue numerot uudestaan tiedostosta tms.)
+Lähetä slavelle scripti 
+Slaven reagointi oli asteen verran vaikeaa saada toimimaan (vaatii salasanaa tms.)
+	=> käskytetään masteristä ajamaan scripti
+Käskytetään masterista lähettämään tulokset
+
+
+-----------------------
+
+
+Alustus:
+
+Livetikulla tehty ubuntu 18.04
+Ajettu oma alustusscripti: 
+wget https://raw.githubusercontent.com/CodeProEnterpriseEdition/Salt/master/createcalculator
+bash createcalculator
+
+Hyväksytty slave masterissa
+
+Aja state setupslaveworker => luo jobs kansion slavelle.
+
+Ajetaan ohjelma masterissa
+
+sudo python3 ohjelma.py
+
+=> annetaan numerot
+=> q lopettaa
+
+
+Slavella:
+cd /home/worker/jobs 
+
+
+Masterilla:
+Tallettaa minionilta haetut tiedostot minion kohtaiseen kansioon
+
+sudo salt worker-slave state.apply getfile/
+
+cd /var/cache/salt/master/minions/
+cd /var/cache/salt/master/minions/worker-slave/files
+
+
+
+Huomioitavaa: 
+
+Minioneilta tiedostoja ladattaessa pitää käydä masterin config fileen laittamassa.
+
+/etc/salt/master
+file_recv: True
+
+Kehitettävää: 
+luo worker user slavelle ja anna sudo oikeudet
+lisää require varmistaaksesi suoritusjärjestys tiedoston siirrossa ja scriptin ajamisessa
+asenna ssh slavelle ja tee scripti jonka voi sitten ajaa joka luo julkisen avaimen kirjautumisen
+siirtää tiedon siirto salt event bussiin
+jos olisi slavella reagointi onnistunut niin ne asetukset olisi voinut asettaa omalla moduulilla.
+
+
+
+
+
+Pentti Korpela
